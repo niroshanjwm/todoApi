@@ -18,11 +18,11 @@ import { JwtAuthGuard } from "src/authentication/jwt-auth.guard";
 import { CurrentUser } from "src/authentication/current-user.decorator";
 import { type AuthorizedPayload } from "src/types/request";
 
+@UseGuards(JwtAuthGuard)
 @Controller("todo")
 export class TodoController {
   constructor(private readonly todosService: TodoService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get(":id")
   async findOne(@Param("id") id: number): Promise<Todo> {
     const todo = await this.todosService.findById(id);
@@ -32,13 +32,11 @@ export class TodoController {
     return todo;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@CurrentUser() user: AuthorizedPayload): Promise<Todo[]> {
     return this.todosService.findAll(user.sub);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @CurrentUser() user: AuthorizedPayload,
@@ -47,7 +45,6 @@ export class TodoController {
     return this.todosService.create({ ...createTodoDto, userId: user.sub });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(":id")
   update(
     @CurrentUser() user: AuthorizedPayload,
@@ -57,7 +54,6 @@ export class TodoController {
     return this.todosService.update(id, { ...createTodoDto, userId: user.sub });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(":id")
   delete(
     @CurrentUser() user: AuthorizedPayload,
