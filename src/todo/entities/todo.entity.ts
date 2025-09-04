@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 
 @Entity()
 export class Todo {
@@ -16,4 +23,8 @@ export class Todo {
 
   @Column()
   userId: number;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: "userId" })
+  user: User;
 }
