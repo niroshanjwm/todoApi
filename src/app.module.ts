@@ -6,6 +6,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Todo } from "./todo/entities/todo.entity";
 import { ConfigModule } from "@nestjs/config";
 import { LoggerMiddleware } from "./common/middleware/logger.middleware";
+import { AuthenticationController } from "./authentication/authentication.controller";
+import { AuthenticationService } from "./authentication/authentication.service";
 
 @Module({
   imports: [
@@ -22,8 +24,8 @@ import { LoggerMiddleware } from "./common/middleware/logger.middleware";
     }),
     TodoModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AuthenticationController],
+  providers: [AppService, AuthenticationService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
