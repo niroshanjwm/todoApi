@@ -14,6 +14,6 @@ export class Todo {
   @Column({ default: false })
   completed: boolean;
 
-  @Column({ default: 266 })
+  @Column()
   userId: number;
 }
