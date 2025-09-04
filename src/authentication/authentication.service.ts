@@ -16,7 +16,7 @@ export class AuthenticationService {
 
   async validPassword(
     password: string,
-    hashPassword: string
+    hashPassword: string,
   ): Promise<boolean> {
     return await bcrypt.compare(password, hashPassword);
   }

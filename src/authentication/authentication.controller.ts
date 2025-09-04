@@ -4,10 +4,14 @@ import {
   Post,
   NotFoundException,
   UnauthorizedException,
+  Get,
+  UseGuards,
 } from "@nestjs/common";
 import { AuthenticationService } from "./authentication.service";
 import { CreateAuthDto } from "./dto/auth.dto";
 import { UserService } from "src/user/user.service";
+import { JwtAuthGuard } from "./jwt-auth.guard";
+import { CurrentUser } from "./current-user.decorator";
 
 @Controller("authentication")
 export class AuthenticationController {
@@ -25,11 +29,20 @@ export class AuthenticationController {
     }
     const passwordValid = await this.authenticationService.validPassword(
       password,
-      user.password,
+      user.password
     );
     if (!passwordValid) {
       throw new UnauthorizedException(`Invalid username or password`);
     }
     return this.authenticationService.login(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("me")
+  getProfile(@CurrentUser() user: { username: string; sub: number }) {
+    if (!user) {
+      throw new UnauthorizedException("User not found in request");
+    }
+    return { username: user.username };
   }
 }
