@@ -7,18 +7,22 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from "@nestjs/common";
 import { Todo } from "./entities/todo.entity";
 import { TodoService } from "./todo.service";
 import { CreateTodoDto } from "./dto/todo.dto";
 import { UpdateResult } from "typeorm";
 import { DeleteResult } from "typeorm/browser";
+import { JwtAuthGuard } from "src/authentication/jwt-auth.guard";
+import { CurrentUser } from "src/authentication/current-user.decorator";
+import { type AuthorizedPayload } from "src/types/request";
 
 @Controller("todo")
 export class TodoController {
   constructor(private readonly todosService: TodoService) {}
 
-  
+  @UseGuards(JwtAuthGuard)
   @Get(":id")
   async findOne(@Param("id") id: number): Promise<Todo> {
     const todo = await this.todosService.findById(id);
@@ -28,26 +32,37 @@ export class TodoController {
     return todo;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(): Promise<Todo[]> {
-    return this.todosService.findAll();
+  findAll(@CurrentUser() user: AuthorizedPayload): Promise<Todo[]> {
+    return this.todosService.findAll(user.sub);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
-    return this.todosService.create(createTodoDto);
+  create(
+    @CurrentUser() user: AuthorizedPayload,
+    @Body() createTodoDto: CreateTodoDto
+  ): Promise<Todo> {
+    return this.todosService.create({ ...createTodoDto, userId: user.sub });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(":id")
   update(
+    @CurrentUser() user: AuthorizedPayload,
     @Param("id") id: number,
     @Body() createTodoDto: CreateTodoDto
   ): Promise<UpdateResult> {
-    return this.todosService.update(id, createTodoDto);
+    return this.todosService.update(id, { ...createTodoDto, userId: user.sub });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(":id")
-  delete(@Param("id") id: number): Promise<DeleteResult> {
-    return this.todosService.delete(id);
+  delete(
+    @CurrentUser() user: AuthorizedPayload,
+    @Param("id") id: number
+  ): Promise<DeleteResult> {
+    return this.todosService.delete(id, user.sub);
   }
 }

@@ -9,15 +9,18 @@ import { DeleteResult } from "typeorm/browser";
 export class TodoService {
   constructor(
     @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>
+    private readonly todoRepository: Repository<Todo>,
   ) {}
 
   findById(id: number): Promise<Todo | null> {
     return this.todoRepository.findOneBy({ id });
   }
 
-  findAll(): Promise<Todo[]> {
-    return this.todoRepository.find();
+  findAll(userId: number): Promise<Todo[]> {
+    return this.todoRepository.find({
+      where: { userId },
+      order: { id: "ASC" },
+    });
   }
 
   create(createTodoDto: CreateTodoDto): Promise<Todo> {
@@ -26,10 +29,13 @@ export class TodoService {
   }
 
   update(id: number, createTodoDto: CreateTodoDto): Promise<UpdateResult> {
-    return this.todoRepository.update({ id }, createTodoDto);
+    return this.todoRepository.update(
+      { id, userId: createTodoDto.userId },
+      createTodoDto,
+    );
   }
 
-  delete(id: number): Promise<DeleteResult> {
-    return this.todoRepository.delete({ id });
+  delete(id: number, userId: number): Promise<DeleteResult> {
+    return this.todoRepository.delete({ id, userId });
   }
 }

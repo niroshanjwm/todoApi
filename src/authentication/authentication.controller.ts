@@ -12,6 +12,7 @@ import { CreateAuthDto } from "./dto/auth.dto";
 import { UserService } from "src/user/user.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { CurrentUser } from "./current-user.decorator";
+import { type AuthorizedPayload } from "src/types/request";
 
 @Controller("authentication")
 export class AuthenticationController {
@@ -29,7 +30,7 @@ export class AuthenticationController {
     }
     const passwordValid = await this.authenticationService.validPassword(
       password,
-      user.password
+      user.password,
     );
     if (!passwordValid) {
       throw new UnauthorizedException(`Invalid username or password`);
@@ -39,7 +40,7 @@ export class AuthenticationController {
 
   @UseGuards(JwtAuthGuard)
   @Get("me")
-  getProfile(@CurrentUser() user: { username: string; sub: number }) {
+  getProfile(@CurrentUser() user: AuthorizedPayload) {
     if (!user) {
       throw new UnauthorizedException("User not found in request");
     }

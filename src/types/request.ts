@@ -4,3 +4,8 @@ export interface AuthenticatedRequest extends Request {
     sub: number;
   };
 }
+
+export type AuthorizedPayload = {
+  username: string;
+  sub: number;
+};
