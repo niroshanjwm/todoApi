@@ -1,5 +1,5 @@
 export class CreateTodoDto {
-  title: string;
-  description: string;
-  isCompleted: boolean = false;
+  todo: string;
+  completed: boolean = false;
+  userId: number = 266; // hardcoded id
 }

@@ -6,11 +6,14 @@ export class Todo {
   id: number;
 
   @Column()
-  title: string;
+  todo: string;
 
   @Column({ nullable: true })
   description?: string;
 
   @Column({ default: false })
-  isCompleted: boolean;
+  completed: boolean;
+
+  @Column({ default: 266 })
+  userId: number;
 }
