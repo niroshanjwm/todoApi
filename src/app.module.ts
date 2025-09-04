@@ -10,7 +10,7 @@ import { AuthenticationController } from "./authentication/authentication.contro
 import { AuthenticationService } from "./authentication/authentication.service";
 import { UserService } from "./user/user.service";
 import { User } from "./user/entities/user.entity";
-
+import { AuthenticationModule } from "./authentication/authentication.module";
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -26,6 +26,7 @@ import { User } from "./user/entities/user.entity";
     }),
     TypeOrmModule.forFeature([Todo, User]),
     TodoModule,
+    AuthenticationModule,
   ],
   controllers: [AppController, AuthenticationController],
   providers: [AppService, AuthenticationService, UserService],
